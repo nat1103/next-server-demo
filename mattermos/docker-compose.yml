@@ -1,0 +1,31 @@
+version: '3.7'
+
+services:
+  db:
+    image: postgres:12-alpine
+    restart: unless-stopped
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: mattermost
+      POSTGRES_USER: mmuser
+      POSTGRES_PASSWORD: mmuser_password
+
+  app:
+    image: mattermost/mattermost-team-edition:latest
+    restart: unless-stopped
+    ports:
+      - "8065:8065"
+    volumes:
+      - mattermost-data:/mattermost/data
+      - mattermost-data:/mattermost/data
+      - ./config.json:/mattermost/config/config.json
+    environment:
+      MM_CONFIG: /mattermost/config/config.json
+    depends_on:
+      - db
+
+volumes:
+  db-data:
+  mattermost-data:
+
